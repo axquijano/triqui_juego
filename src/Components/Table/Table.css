@@ -1,0 +1,62 @@
+.containerTable_0{
+    display: grid;
+    grid-template-columns: repeat(3,90px);
+    grid-template-rows: repeat(3,90px);
+    gap : 10px;
+    font-size: 47px; 
+}
+.containerTable_1{
+    display: grid;
+    grid-template-rows: repeat(6, 50px);
+    grid-template-columns: repeat(6, 50px);
+    gap: 5px;
+}
+
+.containerTable_2{
+    display: grid;
+    grid-template-rows: repeat(9, 34px);
+    grid-template-columns: repeat(9, 34px);
+    gap: 5px;
+}
+
+.containerTable_3{
+    display: grid;
+    grid-template-rows: repeat(11, 30px);
+    grid-template-columns: repeat(11, 30px);
+    gap: 5px;
+}
+.table .box {
+    border: solid 2px;
+    border-radius: 5px; 
+    cursor: pointer;
+}
+
+.turn .box {
+    font-size: 47px;
+}
+.btnReset{
+    background: transparent;
+    width: 100px;
+    font-size: 14px;
+    font-weight: 500;
+    border: solid 2px;
+    line-height: 14px;
+    padding: 10px 0;
+    margin-bottom: 24px;
+    border-radius: 5px;
+}
+
+.btnReset:hover{
+    background: #fff;
+    color: #1a1a1a;
+    font-weight: 500;
+    border-color: #fff;
+}
+
+.turn{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 20px;
+}
+
