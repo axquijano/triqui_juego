@@ -1,8 +1,8 @@
 import './App.css'
-import  Table  from './Components/Table/index';
+import { MyRoutes } from './routes';
 function App() {
   return (
-    <Table />
+    <MyRoutes />
   );
 }
 

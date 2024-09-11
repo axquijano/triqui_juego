@@ -1,57 +1,62 @@
-import { useEffect, useState, } from 'react';
+import {  useState, useRef } from 'react';
 import Box from '../Box/index'
 import './Table.css'
 import confetti from 'canvas-confetti';
-import { TURNS } from '../../constants';
+import { TURNS, BOARDS, LOCAL_STORAGE_N_BOARD_KEY, LOCAL_STORAGE_TABLE_KEY, LOCAL_STORAGE_TURN_KEY } from '../../constants';
 import { checkEndGame, checkWinner } from '../../logic/board';
 import WinnerModal from "../WinnerModal";
 
 
 const Table = () => {
-    const [activeTurn, setActiveTurn] = useState(TURNS.X);
+    // Recuperar tablero guardado de localStorage
+    const numTable = useRef(JSON.parse(localStorage.getItem(LOCAL_STORAGE_N_BOARD_KEY)) || 0);
+    const boardConfig = BOARDS[numTable.current];
+
     const [table, setTable] = useState(
-        Array(9).fill(null)
+        () => {
+            const savedTable = JSON.parse(localStorage.getItem(LOCAL_STORAGE_TABLE_KEY));
+            return savedTable || Array(boardConfig.tamanio).fill(null);
+        }
     );
+
+    const [activeTurn, setActiveTurn] = useState(
+        () => {
+            const savedTurn = localStorage.getItem(LOCAL_STORAGE_TURN_KEY);
+            return savedTurn || TURNS.X
+        }
+    );
+
     //null no hay ganador, false empate 
     const [winner, setWinner] = useState(null);
 
-    useEffect(() => {
-        const turnStorage = localStorage.getItem('turn') || '';
-        const tableStorage = JSON.parse(localStorage.getItem('table')) || [];
-
-        if (turnStorage.length != 0) {
-            setActiveTurn(turnStorage);
-        }
-        if (tableStorage.length != 0) {
-            setTable(tableStorage);
-        }
-    }, []);
-
     const resetPartida = () => {
-
-        const arrayTable = Array(9).fill(null);
-        setTable(arrayTable);
+        const newBoard = Array(boardConfig.tamanio).fill(null);
+        setTable(newBoard);
         setActiveTurn(TURNS.X);
         setWinner(null);
-        localStorage.removeItem('turn');
-        localStorage.removeItem('table');
+        localStorage.removeItem(LOCAL_STORAGE_TURN_KEY);
+        localStorage.removeItem(LOCAL_STORAGE_TABLE_KEY);
     };
 
     const handleOnClick = (index) => {
 
         if (table[index] || winner) return
-        const tableArray = [...table];
-        tableArray[index] = activeTurn;
-        setTable(tableArray);
-        const valor = activeTurn == TURNS.X ? TURNS.O : TURNS.X;
-        setActiveTurn(valor);
-        localStorage.setItem('turn', valor);
-        localStorage.setItem('table', JSON.stringify(tableArray));
-        const newWinner = checkWinner(tableArray);
+
+        const updateBoard = [...table];
+        updateBoard[index] = activeTurn;
+        setTable(updateBoard);
+
+        const newTurn = activeTurn == TURNS.X ? TURNS.O : TURNS.X;
+        setActiveTurn(newTurn);
+        localStorage.setItem(LOCAL_STORAGE_TURN_KEY, newTurn);
+        localStorage.setItem(LOCAL_STORAGE_TABLE_KEY, JSON.stringify(updateBoard));
+
+        const newWinner = checkWinner(updateBoard, index, boardConfig);
+
         if (newWinner) {
             setWinner(newWinner);
             confetti();
-        } else if (checkEndGame(tableArray)) {
+        } else if (checkEndGame(updateBoard)) {
             setWinner(false);
         }
     }
@@ -72,7 +77,7 @@ const Table = () => {
                 Reset del juego
             </button>
 
-            <div className={` table containerTable_0`}>
+            <div className={` table containerTable_${numTable.current}`}>
                 {renderBox}
             </div>
             <section className='turn'>
